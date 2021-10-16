@@ -11,13 +11,14 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.*
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 internal class AccountControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
@@ -204,6 +205,8 @@ internal class AccountControllerTest @Autowired constructor(
         @Test
         fun `should update an existing account`() {
             // given
+            service.deleteAll()
+
             val updateAccount = service.create(Account(name = "MyAccount", document = "123", phone = "12345678"))
                 .copy(name = "Update")
 
@@ -252,6 +255,8 @@ internal class AccountControllerTest @Autowired constructor(
         @Test
         fun `should delete the account with the given id number`() {
             // given
+            service.deleteAll()
+
             val account = service.create(Account(id = 1234L, name = "MyAccount", document = "123", phone = "12345678"))
 
             // when/then
