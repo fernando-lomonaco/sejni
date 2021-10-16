@@ -28,8 +28,6 @@ class AccountServiceImpl(private val repository: AccountRepository) : AccountSer
                 phone = account.phone
             )
             repository.save(accountUpdate)
-        }.or {
-            Optional.empty()
         }
     }
 
