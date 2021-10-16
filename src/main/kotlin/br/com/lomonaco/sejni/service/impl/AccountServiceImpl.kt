@@ -1,7 +1,8 @@
-package br.com.lomonaco.sejni.service
+package br.com.lomonaco.sejni.service.impl
 
 import br.com.lomonaco.sejni.model.Account
 import br.com.lomonaco.sejni.repository.AccountRepository
+import br.com.lomonaco.sejni.service.AccountService
 import org.springframework.stereotype.Service
 import org.springframework.util.Assert
 import java.util.*
