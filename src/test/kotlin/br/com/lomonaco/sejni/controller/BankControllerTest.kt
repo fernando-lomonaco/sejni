@@ -14,7 +14,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.*
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 internal class BankControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper
