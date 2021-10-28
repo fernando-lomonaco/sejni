@@ -9,6 +9,7 @@ import java.util.*
 
 @Service
 class AccountServiceImpl(private val repository: AccountRepository) : AccountService {
+
     override fun getAccounts(): Collection<Account> = repository.findAll()
     override fun getAccount(id: Long): Optional<Account> = repository.findById(id)
     override fun create(account: Account): Account {
