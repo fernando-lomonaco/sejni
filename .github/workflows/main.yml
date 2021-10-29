@@ -61,7 +61,7 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/sejni:latest
-            ${{ secrets.DOCKERHUB_USER }}/sejni:v${{ github.run_number }}
+            ${{ secrets.DOCKER_USERNAME }}/sejni:v${{ github.run_number }}
   CD:
     needs: [CI]
     runs-on: ubuntu-latest
@@ -69,8 +69,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2  
       - name: Deploy to Heroku
-        # You may pin to the exact commit or the version.
-        # uses: AkhileshNS/heroku-deploy@79ef2ae4ff9b897010907016b268fd0f88561820
         uses: AkhileshNS/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
