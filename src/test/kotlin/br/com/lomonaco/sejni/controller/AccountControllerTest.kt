@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.*
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 internal class AccountControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val service: AccountService,
