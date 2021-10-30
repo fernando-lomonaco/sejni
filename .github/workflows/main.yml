@@ -16,6 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   CI:
+    name: Build app and push to Docker - Continuous Integration
     runs-on: ubuntu-latest
     services:
       postgres_db:
@@ -65,14 +66,32 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/sejni:latest
             ${{ secrets.DOCKER_USERNAME }}/sejni:v${{ github.run_number }}
   CD:
+    name: Deploy to Heroku - Continuous Delivery
     needs: [CI]
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2  
-      - name: Deploy to Heroku
+      - name: Build
         uses: AkhileshNS/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
-          heroku_email: "fernando_lomonaco@outlook.com"
+          heroku_email: ${{secrets.HEROKU_APP_EMAIL}}
+  NOTIFICATION:
+    name: Notify on Slack
+    needs: [ CD ]
+    runs-on: ubuntu-latest
+    if: ${{ github.base_ref == 'main' && github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON_EMOJI: ':rocket:'
+          SLACK_MESSAGE: 'Yeahhhhhh!!! :sunglasses:'
+          SLACK_TITLE: Message
+          SLACK_USERNAME: gitHub-Sejni
