@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar -Dserver.port=$PORT build/libs/sejni-0.0.1-SNAPSHOT.jar --spring.config.location=classpath:file:/config/heroku/
+web: java $JAVA_OPTS -Dserver.port=$PORT -Dspring.config.location=classpath:file:/config/heroku/ -jar build/libs/sejni-0.0.1-SNAPSHOT.jar
