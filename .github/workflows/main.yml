@@ -76,9 +76,10 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_CHANNEL: sejni-success
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON_EMOJI: ':rocket:'
-          SLACK_MESSAGE: 'Post Content :rocket:'
+          SLACK_MESSAGE: 'Build number: ${{ github.run_number }} :rocket: \n Repository: ${{ github.repository }} \n for commit (${{ github.sha }}) \n on branch $GITHUB_REF'
           SLACK_TITLE: 'Yeahhhhhh!!! :sunglasses:'
           SLACK_USERNAME: gitHub-Sejni
+
