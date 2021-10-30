@@ -43,7 +43,6 @@ jobs:
   CD:
     needs: [CI]
     runs-on: ubuntu-latest
-    if: ${{ github.base_ref == 'main' && github.event_name == 'pull_request' }}
     steps:
       - uses: actions/checkout@v2  
       - name: Build
@@ -56,7 +55,6 @@ jobs:
   DOCKER:
     needs: [ CD ]
     runs-on: ubuntu-latest
-    if: ${{ github.base_ref == 'main' && github.event_name == 'pull_request' }}
     steps:
       - uses: actions/checkout@v2
       - name: Docker Login
@@ -77,7 +75,6 @@ jobs:
   NOTIFICATION:
     needs: [ DOCKER ]
     runs-on: ubuntu-latest
-    if: ${{ github.base_ref == 'main' && github.event_name == 'pull_request' }}
     steps:
       - uses: actions/checkout@v2
       - name: Slack Notification
