@@ -7,10 +7,12 @@ plugins {
 	kotlin("plugin.spring") version "1.5.31"
 	kotlin("plugin.jpa") version "1.5.31"
 	java
+	jacoco
 }
 
 group = "br.com.lomonaco"
 version = "0.0.1-SNAPSHOT"
+description = "Kotlin App"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -59,3 +61,12 @@ tasks.register<Jar>("uberJar") {
 		configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
 	})
 }
+
+tasks.jacocoTestReport {
+	reports {
+		xml.required.set(true)
+		csv.required.set(false)
+		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+	}
+}
+
