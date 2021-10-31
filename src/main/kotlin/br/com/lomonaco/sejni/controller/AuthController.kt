@@ -9,7 +9,6 @@ import br.com.lomonaco.sejni.service.UserService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -25,15 +24,14 @@ import javax.validation.Valid
 @RequestMapping("auth")
 class AuthController(
     private val service: UserService,
-    private val authenticationManager: AuthenticationManager,
     private val userDetailsService: UserDetailsService,
 ) {
 
     @Autowired
     private lateinit var jwtUtil: JWTUtil
 
-    @PostMapping("signin")
-    fun signin(@Valid @RequestBody loginDTO: LoginDTO): ResponseEntity<Response> {
+    @PostMapping("login")
+    fun login(@Valid @RequestBody loginDTO: LoginDTO): ResponseEntity<Response> {
         val response = Response()
 
         val authentication =

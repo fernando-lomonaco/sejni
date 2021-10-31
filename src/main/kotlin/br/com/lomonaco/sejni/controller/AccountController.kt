@@ -2,12 +2,14 @@ package br.com.lomonaco.sejni.controller
 
 import br.com.lomonaco.sejni.model.Account
 import br.com.lomonaco.sejni.service.AccountService
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@Tag(name = "API Account", description = "Route of accounts")
 @RequestMapping("/api/accounts")
 class AccountController(private val service: AccountService) {
 

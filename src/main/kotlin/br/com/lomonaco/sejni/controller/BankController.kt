@@ -2,11 +2,13 @@ package br.com.lomonaco.sejni.controller
 
 import br.com.lomonaco.sejni.model.Bank
 import br.com.lomonaco.sejni.service.BankService
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@Tag(name = "API bank", description = "Route of banks")
 @RequestMapping("/api/banks")
 class BankController(private val service: BankService) {
 
@@ -19,7 +21,7 @@ class BankController(private val service: BankService) {
         ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
 
     @GetMapping
-    fun getBanks(): Collection<Bank> = service.getBanks();
+    fun getBanks(): Collection<Bank> = service.getBanks()
 
     @GetMapping("/{accountNumber}")
     fun getBank(@PathVariable accountNumber: String) = service.getBank(accountNumber)
