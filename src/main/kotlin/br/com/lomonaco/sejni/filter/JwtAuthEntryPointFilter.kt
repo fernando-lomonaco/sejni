@@ -1,6 +1,6 @@
 package br.com.lomonaco.sejni.filter
 
-import br.com.lomonaco.sejni.dto.response.ExceptionResponse
+import br.com.lomonaco.sejni.exception.ExceptionResponse
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class JwtAuthEntryPointFilter (private val objectMapper: ObjectMapper) : AuthenticationEntryPoint  {
+class JwtAuthEntryPointFilter(private val objectMapper: ObjectMapper) : AuthenticationEntryPoint {
 
     override fun commence(
         request: HttpServletRequest?,
@@ -22,13 +22,13 @@ class JwtAuthEntryPointFilter (private val objectMapper: ObjectMapper) : Authent
         response?.status = HttpStatus.UNAUTHORIZED.value()
         response?.contentType = MediaType.APPLICATION_JSON_VALUE
 
-        val exceptionResponse = ExceptionResponse.Builder()
-            .message(authException!!.message!!)
-            .code(HttpStatus.UNAUTHORIZED.value())
-            .status(HttpStatus.UNAUTHORIZED.reasonPhrase)
-            .datetime(LocalDateTime.now())
-            .details("Unauthorized")
-            .build()
+        val exceptionResponse = ExceptionResponse(
+            message = authException!!.message!!,
+            code = HttpStatus.UNAUTHORIZED.value(),
+            status = HttpStatus.UNAUTHORIZED.reasonPhrase,
+            datetime = LocalDateTime.now(),
+            details = "Unauthorized"
+        )
 
         val outputStream = response?.outputStream
         objectMapper.writeValue(outputStream, exceptionResponse)
