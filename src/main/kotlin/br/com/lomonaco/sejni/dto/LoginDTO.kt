@@ -1,4 +1,4 @@
-package br.com.lomonaco.sejni.dto;
+package br.com.lomonaco.sejni.dto
 
 import javax.validation.constraints.NotBlank
 
