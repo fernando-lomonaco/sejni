@@ -13,12 +13,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.*
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-//@ActiveProfiles("test")
 internal class AccountControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val service: AccountService,
