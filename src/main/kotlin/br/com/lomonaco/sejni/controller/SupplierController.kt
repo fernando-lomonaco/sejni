@@ -1,40 +1,50 @@
 package br.com.lomonaco.sejni.controller
 
-import br.com.lomonaco.sejni.model.Bank
-import br.com.lomonaco.sejni.service.BankService
+import br.com.lomonaco.sejni.dto.SupplierDTO
+import br.com.lomonaco.sejni.dto.response.Response
+import br.com.lomonaco.sejni.model.Supplier
+import br.com.lomonaco.sejni.service.SupplierService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
-@Tag(name = "API bank", description = "Route of banks")
-@RequestMapping("/api/banks")
-class BankController(private val service: BankService) {
-
-    @ExceptionHandler(NoSuchElementException::class)
-    fun handleNotFound(e: NoSuchElementException): ResponseEntity<String> =
-        ResponseEntity(e.message, HttpStatus.NOT_FOUND)
-
-    @ExceptionHandler(IllegalArgumentException::class)
-    fun handleBadRequest(e: IllegalArgumentException): ResponseEntity<String> =
-        ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+@Tag(name = "API supplier", description = "Route of supplies")
+@RequestMapping("api/suppliers")
+class SupplierController(private val service: SupplierService) {
 
     @GetMapping
-    fun getBanks(): Collection<Bank> = service.getBanks()
+    fun getBanks(): Collection<Supplier> = service.getSuppliers()
 
-    @GetMapping("/{accountNumber}")
-    fun getBank(@PathVariable accountNumber: String) = service.getBank(accountNumber)
+    @GetMapping("/{id}")
+    fun getBank(@PathVariable id: Long) = service.getSupplier(id)
 
+    @Operation(summary = "Create a supplier")
+    @ApiResponse(responseCode = "201", description = "Case the supplier has been created")
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    fun addBank(@RequestBody bank: Bank): Bank = service.addBank(bank)
+    fun addSupplier(@Valid @RequestBody supplierDTO: SupplierDTO): ResponseEntity<Response> {
+        val response = Response()
+        val supplierCreated = service.create(supplierDTO)
+        response.data = supplierCreated
+        return ResponseEntity(response, HttpStatus.CREATED)
+    }
 
-    @PatchMapping
-    fun updateBank(@RequestBody  bank: Bank): Bank = service.updateBank(bank)
+    /*  @GetMapping("/{accountNumber}")
+      fun getBank(@PathVariable accountNumber: String) = service.getSupplier(accountNumber)
 
-    @DeleteMapping("/{accountNumber}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteBank(@PathVariable accountNumber: String): Unit = service.delete(accountNumber)
+      @PostMapping
+      @ResponseStatus(HttpStatus.CREATED)
+      fun addBank(@RequestBody bank: Bank): Bank = service.addBank(bank)
 
+      @PatchMapping
+      fun updateBank(@RequestBody  bank: Bank): Bank = service.updateBank(bank)
+
+      @DeleteMapping("/{accountNumber}")
+      @ResponseStatus(HttpStatus.NO_CONTENT)
+      fun deleteBank(@PathVariable accountNumber: String): Unit = service.delete(accountNumber)
+  */
 }
