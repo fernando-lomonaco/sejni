@@ -1,7 +1,10 @@
 name: BUILD CI/CD
 
-on: [push, pull_request]
-
+on:
+  push:
+  pull_request:
+    branches: [main]
+    
   workflow_dispatch:
 
 jobs:
