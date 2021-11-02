@@ -10,7 +10,6 @@ class SupplierMapper : Mapper<SupplierDTO, Supplier> {
         SupplierDTO(
             entity.id,
             entity.name,
-            entity.serviceType,
             entity.responsible,
             entity.phone,
             entity.email,
@@ -22,7 +21,6 @@ class SupplierMapper : Mapper<SupplierDTO, Supplier> {
     override fun toEntity(domain: SupplierDTO): Supplier = Supplier(
         domain.id,
         domain.name,
-        domain.serviceType,
         domain.responsible,
         domain.phone,
         domain.email,

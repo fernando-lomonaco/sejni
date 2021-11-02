@@ -1,22 +1,16 @@
 package br.com.lomonaco.sejni.dto
 
-import br.com.lomonaco.sejni.enums.ServiceType
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Pattern
+import javax.validation.constraints.Size
 
 data class SupplierDTO(
     val id: Long = -1,
     @field:NotBlank(message = "Nome da empresa/instituição é obrigatório")
+    @field:Size(min = 3, message = "Nome deve ter mais de 3 caracteres")
     val name: String,
-    @Pattern(
-        regexp = "^(BUFFET|CHURCH|GUESTS)$",
-        message = "Somente os perfis BUFFET, CHURCH ou GUESTS são aceitos."
-    )
-    @field:NotBlank(message = "Tipo de serviço é obrigatório")
-    val serviceType: ServiceType,
-    @field:NotBlank(message = "Nome do do responsável é obrigatório")
+    @field:NotBlank(message = "Nome do responsável é obrigatório")
     val responsible: String,
     @field:NotBlank(message = "Nº de telefone é obrigatório")
     val phone: String,
