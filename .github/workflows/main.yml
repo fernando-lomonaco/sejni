@@ -2,9 +2,8 @@ name: BUILD CI/CD
 
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
   workflow_dispatch:
 
@@ -52,6 +51,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker Build and Push
         uses: docker/build-push-action@v2.7.0
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           context: .
           file: Dockerfile
@@ -63,6 +63,7 @@ jobs:
   CD:
     needs: [CI]
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v2  
       - name: Build
@@ -73,7 +74,7 @@ jobs:
           heroku_email: ${{secrets.HEROKU_APP_EMAIL}}
 
   NOTIFICATION:
-    needs: [ CD ]
+    needs: [CD]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

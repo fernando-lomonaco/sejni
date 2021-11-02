@@ -40,9 +40,6 @@ class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
     @Lazy
     private lateinit var jwtAuthorizationFilter: JWTAuthorizationFilter
 
-    //@Autowired
-    //private lateinit var jwtUtil: JWTUtil
-
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder())
     }
@@ -73,7 +70,9 @@ class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
             .authorizeRequests()
             .antMatchers(HttpMethod.POST, "/auth/**")
             .permitAll()
-            .antMatchers(HttpMethod.POST, "/api/banks/**").hasRole("ADMIN")
+            .antMatchers(HttpMethod.POST, "/api/suppliers").hasRole("ADMIN")
+            .antMatchers(HttpMethod.DELETE, "/api/suppliers/**").hasRole("ADMIN")
+            .antMatchers(HttpMethod.GET, "/api/suppliers/**").hasAnyRole("USER", "ADMIN")
             .anyRequest().authenticated()
             .and()
             .logout()
