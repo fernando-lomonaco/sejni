@@ -20,8 +20,8 @@ class JwtAuthorizationFilter(
 ) : OncePerRequestFilter() {
 
     companion object {
-        const val AUTH_HEADER = "Authorization"
-        const val BEARER_PREFIX = "Bearer"
+        private const val AUTH_HEADER = "Authorization"
+        private const val BEARER_PREFIX = "Bearer"
     }
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
