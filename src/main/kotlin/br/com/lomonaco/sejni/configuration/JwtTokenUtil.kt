@@ -13,9 +13,9 @@ import java.util.*
 class JwtTokenUtil {
 
     companion object {
-        const val CLAIM_KEY_USERNAME = "sub"
-        const val CLAIM_KEY_ROLE = "role"
-        const val CLAIM_KEY_CREATED = "created"
+        private const val CLAIM_KEY_USERNAME = "sub"
+        private const val CLAIM_KEY_ROLE = "role"
+        private const val CLAIM_KEY_CREATED = "created"
     }
 
     @Value("\${jwt.secret}")
