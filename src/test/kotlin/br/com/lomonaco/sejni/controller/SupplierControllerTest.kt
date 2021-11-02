@@ -1,44 +1,64 @@
 package br.com.lomonaco.sejni.controller
 
-import br.com.lomonaco.sejni.model.Bank
+import br.com.lomonaco.sejni.dto.SupplierDTO
+import br.com.lomonaco.sejni.service.SupplierService
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.*
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.post
+import java.time.LocalDateTime
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
+@TestInstance(Lifecycle.PER_CLASS)
 internal class SupplierControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
+    val service: SupplierService,
     val objectMapper: ObjectMapper
 ) {
 
-    private val baseUrl = "/api/banks"
+    private val baseUrl = "/api/suppliers"
+
+    @BeforeEach
+    internal fun beforeEach() {
+        service.deleteAll()
+    }
 
     @Nested
-    @DisplayName("GET /api/banks")
-    @TestInstance(Lifecycle.PER_CLASS)
-    inner class GetBanks {
+    @DisplayName("GET /api/suppliers")
+    inner class GetSuppliers {
+
         @Test
-        fun `should return all banks`() {
+        fun `should return all suppliers`() {
+            val supplier = SupplierDTO(
+                name = "My Supplier",
+                responsible = "Any Responsible",
+                phone = "Any Phone",
+                email = "Any Email",
+                createdDate = LocalDateTime.now(),
+                updatedDate = LocalDateTime.now()
+            )
+            service.create(supplier)
+
             // when / then
             mockMvc.get(baseUrl)
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$[0].trust") {
-                        isNumber()
+                    jsonPath("$[0].name") {
+                        isString()
                     }
-                    jsonPath("$[0].accountNumber") {
-                        value("1234")
+                    jsonPath("$[0].responsible") {
+                        value("Any Responsible")
                     }
                 }
         }
@@ -46,36 +66,44 @@ internal class SupplierControllerTest @Autowired constructor(
     }
 
     @Nested
-    @DisplayName("GET /api/banks/{accountNumber}")
-    @TestInstance(Lifecycle.PER_CLASS)
-    inner class GetBank {
+    @DisplayName("GET /api/suppliers/{id}")
+    inner class GetSupplier {
         @Test
-        fun `should return the bank with the given account number `() {
+        fun `should return the supplier with the given id `() {
             // given
-            val accountNumber = 1234
+            val supplier = service.create(
+                SupplierDTO(
+                    name = "My Supplier",
+                    responsible = "Any Responsible",
+                    phone = "Any Phone",
+                    email = "Any Email",
+                    createdDate = LocalDateTime.now(),
+                    updatedDate = LocalDateTime.now()
+                )
+            )
 
             // when/then
-            mockMvc.get("$baseUrl/$accountNumber")
+            mockMvc.get("$baseUrl/${supplier.id}")
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.trust") {
-                        value("3.14")
+                    jsonPath("$.name") {
+                        value("My Supplier")
                     }
-                    jsonPath("$.transactionFee") {
-                        value("17")
+                    jsonPath("$.id") {
+                        isNumber()
                     }
                 }
         }
 
         @Test
-        fun `should return NOT FOUNT if the account number does not exist `() {
+        fun `should return NOT FOUND if the supplier id does not exist `() {
             // given
-            val accountNumber = "does_not_exist"
+            val id = 404L
 
             // when/then
-            mockMvc.get("$baseUrl/$accountNumber")
+            mockMvc.get("$baseUrl/$id")
                 .andDo { print() }
                 .andExpect { status { isNotFound() } }
 
@@ -83,19 +111,25 @@ internal class SupplierControllerTest @Autowired constructor(
     }
 
     @Nested
-    @DisplayName("POST /api/banks")
-    @TestInstance(Lifecycle.PER_CLASS)
-    inner class PostNewBank {
+    @DisplayName("POST /api/suppliers")
+    inner class PostNewSupplier {
 
         @Test
-        fun `should add the new bank`() {
+        fun `should add the new supplier`() {
             // given
-            val newBank = Bank("acc123", 31.415, 2)
+            val newSupplier = SupplierDTO(
+                name = "My Supplier",
+                responsible = "Any Responsible",
+                phone = "Any Phone",
+                email = "Any Email",
+                createdDate = LocalDateTime.now(),
+                updatedDate = LocalDateTime.now()
+            )
 
             // when
             val performPost = mockMvc.post(baseUrl) {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(newBank)
+                content = objectMapper.writeValueAsString(newSupplier)
             }
 
             // then
@@ -103,34 +137,69 @@ internal class SupplierControllerTest @Autowired constructor(
                 .andDo { print() }
                 .andExpect {
                     status { isCreated() }
-                    content {
-                        contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(newBank))
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.data.name") {
+                        value("My Supplier")
+                    }
+                    jsonPath("$.data.phone") {
+                        value("Any Phone")
+                    }
+                    jsonPath("$.data.email") {
+                        value("Any Email")
                     }
                 }
 
-            mockMvc.get("$baseUrl/${newBank.accountNumber}")
-                .andExpect { content { json(objectMapper.writeValueAsString(newBank)) } }
+            Assertions.assertFalse(service.getSuppliers().isEmpty())
         }
 
         @Test
-        fun `should return BAD REQUEST if bank with given account number already exists`() {
+        fun `should return BAD REQUEST if supplier with given name already exists`() {
             // given
-            val invalidBank = Bank("1234", 1.0, 1)
+            service.create(
+                SupplierDTO(
+                    name = "My Supplier",
+                    responsible = "Any Responsible",
+                    phone = "Any Phone",
+                    email = "Any Email",
+                    createdDate = LocalDateTime.now(),
+                    updatedDate = LocalDateTime.now()
+                )
+            )
+            val invalidNewSupplier = SupplierDTO(
+                name = "My Supplier",
+                responsible = "Any Responsible1",
+                phone = "Any Phone1",
+                email = "Any Email1",
+                createdDate = LocalDateTime.now(),
+                updatedDate = LocalDateTime.now()
+            )
 
             // when
             val performPost = mockMvc.post(baseUrl) {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(invalidBank)
+                content = objectMapper.writeValueAsString(invalidNewSupplier)
             }
             // then
             performPost
                 .andDo { print() }
-                .andExpect { status { isBadRequest() } }
+                .andExpect {
+                    status { isBadRequest() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        jsonPath("$.statusCode") {
+                            isNumber()
+                            value(HttpStatus.BAD_REQUEST.value())
+                        }
+                        jsonPath("$.message") {
+                            isString()
+                            value("Supplier with name ${invalidNewSupplier.name} already exists.")
+                        }
+                    }
+                }
         }
     }
 
-    @Nested
+    /*@Nested
     @DisplayName("PATCH /api/banks")
     @TestInstance(Lifecycle.PER_CLASS)
     inner class PatchExistingBank {
@@ -176,36 +245,47 @@ internal class SupplierControllerTest @Autowired constructor(
                 .andDo { print() }
                 .andExpect { status { isNotFound() } }
         }
-    }
+    }*/
 
     @Nested
-    @DisplayName("DELETE /api/banks/{accountNumber}")
-    @TestInstance(Lifecycle.PER_CLASS)
-    inner class DeleteExistingBank {
+    @DisplayName("DELETE /api/suppliers/{id}")
+    inner class DeleteExistingSupplier {
 
         @Test
-        fun `should delete the bank with the given account number`() {
+        fun `should delete the supplier with the given id`() {
             // given
-            val accountNumber = 1234
+            val supplier = service.create(
+                SupplierDTO(
+                    name = "My Supplier",
+                    responsible = "Any Responsible",
+                    phone = "Any Phone",
+                    email = "Any Email",
+                    createdDate = LocalDateTime.now(),
+                    updatedDate = LocalDateTime.now()
+                )
+            )
 
             // when/then
-            mockMvc.delete("$baseUrl/$accountNumber")
+            mockMvc.delete("$baseUrl/${supplier.id}")
                 .andDo { print() }
                 .andExpect {
                     status { isNoContent() }
                 }
 
-            mockMvc.get("$baseUrl/${accountNumber}")
+            mockMvc.get("$baseUrl/${supplier.id}")
                 .andExpect { status { isNotFound() } }
+
+            val findById = service.getSupplier(supplier.id)
+            Assertions.assertFalse(findById.isPresent)
         }
 
         @Test
-        fun `should return NOT FOUND if nobank with given account number exists`() {
+        fun `should return NOT FOUND if no supplier with given id number exists`() {
             // given
-            val invalidAccountNumber = "does_not_exist"
+            val invalidSupplierId = 404L
 
             // when/then
-            mockMvc.delete("$baseUrl/$invalidAccountNumber")
+            mockMvc.delete("$baseUrl/$invalidSupplierId")
                 .andDo { print() }
                 .andExpect { status { isNotFound() } }
 

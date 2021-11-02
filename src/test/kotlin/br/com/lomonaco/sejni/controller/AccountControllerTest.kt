@@ -3,11 +3,9 @@ package br.com.lomonaco.sejni.controller
 import br.com.lomonaco.sejni.model.Account
 import br.com.lomonaco.sejni.service.AccountService
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,6 +15,7 @@ import org.springframework.test.web.servlet.*
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
+@TestInstance(Lifecycle.PER_CLASS)
 internal class AccountControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val service: AccountService,
@@ -25,9 +24,13 @@ internal class AccountControllerTest @Autowired constructor(
 
     private val baseUrl = "/api/accounts"
 
+    @BeforeEach
+    internal fun beforeEach() {
+        service.deleteAll()
+    }
+
     @Nested
     @DisplayName("GET /api/accounts")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class GetAccounts {
         @Test
         fun `should return all accounts`() {
@@ -49,15 +52,12 @@ internal class AccountControllerTest @Autowired constructor(
                         value("123")
                     }
                 }
-
-            service.delete(account)
         }
 
     }
 
     @Nested
     @DisplayName("GET /api/accounts/{id}")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class GetAccount {
 
         @Test
@@ -78,9 +78,6 @@ internal class AccountControllerTest @Autowired constructor(
                         value("123")
                     }
                 }
-
-            service.delete(account)
-
         }
 
         @Test
@@ -92,13 +89,11 @@ internal class AccountControllerTest @Autowired constructor(
             mockMvc.get("$baseUrl/$id")
                 .andDo { print() }
                 .andExpect { status { isNotFound() } }
-
         }
     }
 
     @Nested
     @DisplayName("POST /api/accounts")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class PostNewAccount {
 
         @Test
@@ -196,14 +191,11 @@ internal class AccountControllerTest @Autowired constructor(
 
     @Nested
     @DisplayName("PUT /api/accounts")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class PutExistingAccount {
 
         @Test
         fun `should update an existing account`() {
             // given
-            service.deleteAll()
-
             val updateAccount = service.create(Account(name = "MyAccount", document = "123", phone = "12345678"))
                 .copy(name = "Update")
 
@@ -238,22 +230,17 @@ internal class AccountControllerTest @Autowired constructor(
             val findById = service.getAccount(updateAccount.id!!)
             assertTrue(findById.isPresent)
             assertEquals(updateAccount.name, findById.get().name)
-
-            service.delete(updateAccount)
         }
 
     }
 
     @Nested
     @DisplayName("DELETE /api/accounts/{id}")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class DeleteExistingAccount {
 
         @Test
         fun `should delete the account with the given id number`() {
             // given
-            service.deleteAll()
-
             val account = service.create(Account(id = 1234L, name = "MyAccount", document = "123", phone = "12345678"))
 
             // when/then
@@ -268,21 +255,17 @@ internal class AccountControllerTest @Autowired constructor(
 
             val findById = service.getAccount(account.id!!)
             assertFalse(findById.isPresent)
-            service.delete(account)
-
         }
 
         @Test
         fun `should return NOT FOUND if no account with given id number exists`() {
             // given
-            val invalidAccountNumber = 404L
+            val invalidAccountId = 404L
 
             // when/then
-            mockMvc.delete("$baseUrl/$invalidAccountNumber")
+            mockMvc.delete("$baseUrl/$invalidAccountId")
                 .andDo { print() }
                 .andExpect { status { isNotFound() } }
-
         }
-
     }
 }
