@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
     branches: [main]
-    
+
   workflow_dispatch:
 
 jobs:
@@ -74,6 +74,7 @@ jobs:
           heroku_email: ${{secrets.HEROKU_APP_EMAIL}}
 
   NOTIFICATION:
+    needs: [CD]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
