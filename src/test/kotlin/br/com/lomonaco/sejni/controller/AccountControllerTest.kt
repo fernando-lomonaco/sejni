@@ -146,7 +146,7 @@ internal class AccountControllerTest @Autowired constructor(
                     status { isBadRequest() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        jsonPath("$.statusCode") {
+                        jsonPath("$.code") {
                             isNumber()
                             value(HttpStatus.BAD_REQUEST.value())
                         }
@@ -176,7 +176,7 @@ internal class AccountControllerTest @Autowired constructor(
                     status { isBadRequest() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        jsonPath("$.statusCode") {
+                        jsonPath("$.code") {
                             isNumber()
                             value(HttpStatus.BAD_REQUEST.value())
                         }
