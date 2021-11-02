@@ -1,7 +1,5 @@
 package br.com.lomonaco.sejni.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
@@ -16,8 +14,4 @@ data class SupplierDTO(
     val phone: String,
     @field:NotBlank(message = "E-mail é obrigatório")
     val email: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy HH:mm:ss")
-    val createdDate: LocalDateTime,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy HH:mm:ss")
-    val updatedDate: LocalDateTime,
 )

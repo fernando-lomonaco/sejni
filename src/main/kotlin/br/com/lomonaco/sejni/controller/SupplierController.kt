@@ -2,7 +2,6 @@ package br.com.lomonaco.sejni.controller
 
 import br.com.lomonaco.sejni.dto.SupplierDTO
 import br.com.lomonaco.sejni.dto.response.Response
-import br.com.lomonaco.sejni.model.Account
 import br.com.lomonaco.sejni.model.Supplier
 import br.com.lomonaco.sejni.service.SupplierService
 import io.swagger.v3.oas.annotations.Operation
