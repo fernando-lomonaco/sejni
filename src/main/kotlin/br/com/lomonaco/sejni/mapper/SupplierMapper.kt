@@ -3,6 +3,7 @@ package br.com.lomonaco.sejni.mapper
 import br.com.lomonaco.sejni.dto.SupplierDTO
 import br.com.lomonaco.sejni.model.Supplier
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class SupplierMapper : Mapper<SupplierDTO, Supplier> {
@@ -12,9 +13,7 @@ class SupplierMapper : Mapper<SupplierDTO, Supplier> {
             entity.name,
             entity.responsible,
             entity.phone,
-            entity.email,
-            entity.createdDate,
-            entity.updatedDate
+            entity.email
         )
 
 
@@ -24,7 +23,7 @@ class SupplierMapper : Mapper<SupplierDTO, Supplier> {
         domain.responsible,
         domain.phone,
         domain.email,
-        domain.createdDate,
-        domain.updatedDate
+        LocalDateTime.now(),
+        LocalDateTime.now(),
     )
 }

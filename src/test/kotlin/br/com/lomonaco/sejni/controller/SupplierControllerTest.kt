@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-import java.time.LocalDateTime
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -42,9 +41,7 @@ internal class SupplierControllerTest @Autowired constructor(
                 name = "My Supplier",
                 responsible = "Any Responsible",
                 phone = "Any Phone",
-                email = "Any Email",
-                createdDate = LocalDateTime.now(),
-                updatedDate = LocalDateTime.now()
+                email = "Any Email"
             )
             service.create(supplier)
 
@@ -76,9 +73,7 @@ internal class SupplierControllerTest @Autowired constructor(
                     name = "My Supplier",
                     responsible = "Any Responsible",
                     phone = "Any Phone",
-                    email = "Any Email",
-                    createdDate = LocalDateTime.now(),
-                    updatedDate = LocalDateTime.now()
+                    email = "Any Email"
                 )
             )
 
@@ -121,9 +116,7 @@ internal class SupplierControllerTest @Autowired constructor(
                 name = "My Supplier",
                 responsible = "Any Responsible",
                 phone = "Any Phone",
-                email = "Any Email",
-                createdDate = LocalDateTime.now(),
-                updatedDate = LocalDateTime.now()
+                email = "Any Email"
             )
 
             // when
@@ -160,18 +153,14 @@ internal class SupplierControllerTest @Autowired constructor(
                     name = "My Supplier",
                     responsible = "Any Responsible",
                     phone = "Any Phone",
-                    email = "Any Email",
-                    createdDate = LocalDateTime.now(),
-                    updatedDate = LocalDateTime.now()
+                    email = "Any Email"
                 )
             )
             val invalidNewSupplier = SupplierDTO(
                 name = "My Supplier",
                 responsible = "Any Responsible1",
                 phone = "Any Phone1",
-                email = "Any Email1",
-                createdDate = LocalDateTime.now(),
-                updatedDate = LocalDateTime.now()
+                email = "Any Email1"
             )
 
             // when
@@ -186,7 +175,7 @@ internal class SupplierControllerTest @Autowired constructor(
                     status { isBadRequest() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        jsonPath("$.statusCode") {
+                        jsonPath("$.code") {
                             isNumber()
                             value(HttpStatus.BAD_REQUEST.value())
                         }
@@ -259,9 +248,7 @@ internal class SupplierControllerTest @Autowired constructor(
                     name = "My Supplier",
                     responsible = "Any Responsible",
                     phone = "Any Phone",
-                    email = "Any Email",
-                    createdDate = LocalDateTime.now(),
-                    updatedDate = LocalDateTime.now()
+                    email = "Any Email"
                 )
             )
 

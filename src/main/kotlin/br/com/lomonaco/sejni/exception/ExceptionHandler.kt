@@ -14,10 +14,10 @@ class ExceptionHandler {
     fun handleNotFound(exception: NoSuchElementException, request: WebRequest): ResponseEntity<ExceptionResponse> {
         val exceptionResponse = ExceptionResponse(
             message = exception.message,
-            HttpStatus.NOT_FOUND.value(),
-            HttpStatus.NOT_FOUND.reasonPhrase,
-            LocalDateTime.now(),
-            request.getDescription(false)
+            code = HttpStatus.NOT_FOUND.value(),
+            status = HttpStatus.NOT_FOUND.reasonPhrase,
+            datetime = LocalDateTime.now(),
+            details = request.getDescription(false)
         )
 
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exceptionResponse)
@@ -25,7 +25,16 @@ class ExceptionHandler {
 
 
     @ExceptionHandler(IllegalArgumentException::class)
-    fun handleBadRequest(e: IllegalArgumentException): ResponseEntity<String> =
-        ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+    fun supplierExceptionHandler(exception: Exception, request: WebRequest): ResponseEntity<ExceptionResponse> {
+        val exceptionResponse = ExceptionResponse(
+            message = exception.message,
+            code = HttpStatus.BAD_REQUEST.value(),
+            status = HttpStatus.BAD_REQUEST.reasonPhrase,
+            datetime = LocalDateTime.now(),
+            details = request.getDescription(false)
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse)
+
+    }
 
 }

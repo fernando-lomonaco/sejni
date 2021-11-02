@@ -1,23 +1,32 @@
 package br.com.lomonaco.sejni.configuration
+
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class JWTUtil {
+class JwtTokenUtil {
+
+    companion object {
+        private const val CLAIM_KEY_USERNAME = "sub"
+        private const val CLAIM_KEY_ROLE = "role"
+        private const val CLAIM_KEY_CREATED = "created"
+    }
 
     @Value("\${jwt.secret}")
     private lateinit var secret: String
 
-    private val expiration: Long = 60000
+    private val expiration: Long = 38200000
 
-    fun generateToken(username: String): String {
+    fun generateToken(claims: Map<String, Any>): String {
         return Jwts.builder()
-            .setSubject(username)
-            .setExpiration(Date(System.currentTimeMillis() + expiration))
+            .setClaims(claims)
+            .setExpiration(Date(System.currentTimeMillis() + expiration * 1000))
             .signWith(SignatureAlgorithm.HS512, secret.toByteArray())
             .compact()
     }
@@ -44,8 +53,27 @@ class JWTUtil {
         }
     }
 
-    fun getUserName(token: String): String? {
+    fun getUserNameFromToken(token: String): String? {
         val claims = getClaimsToken(token)
         return claims?.subject
     }
+
+    fun getToken(userDetails: UserDetails): String {
+        val claims: MutableMap<String, Any> = HashMap()
+        claims[CLAIM_KEY_USERNAME] = userDetails.username
+        claims[CLAIM_KEY_CREATED] = Date()
+        userDetails.authorities.forEach { authority: GrantedAuthority? ->
+            claims[CLAIM_KEY_ROLE] = authority!!.authority
+        }
+        return generateToken(claims)
+    }
+
+    fun getToken(username: String): String {
+        val claims: MutableMap<String, Any> = HashMap()
+        claims[CLAIM_KEY_USERNAME] = username
+        claims[CLAIM_KEY_CREATED] = Date()
+        return generateToken(claims)
+    }
+
+
 }
