@@ -2,6 +2,7 @@ package br.com.lomonaco.sejni.controller
 
 import br.com.lomonaco.sejni.dto.SupplierDTO
 import br.com.lomonaco.sejni.dto.response.Response
+import br.com.lomonaco.sejni.model.Account
 import br.com.lomonaco.sejni.model.Supplier
 import br.com.lomonaco.sejni.service.SupplierService
 import io.swagger.v3.oas.annotations.Operation
@@ -21,7 +22,10 @@ class SupplierController(private val service: SupplierService) {
     fun getBanks(): Collection<Supplier> = service.getSuppliers()
 
     @GetMapping("/{id}")
-    fun getBank(@PathVariable id: Long) = service.getSupplier(id)
+    fun getBank(@PathVariable id: Long): ResponseEntity<Supplier> =
+        service.getSupplier(id).map {
+            ResponseEntity.ok(it)
+        }.orElse(ResponseEntity.notFound().build())
 
     @Operation(summary = "Create a supplier")
     @ApiResponse(responseCode = "201", description = "Case the supplier has been created")
@@ -42,9 +46,12 @@ class SupplierController(private val service: SupplierService) {
 
       @PatchMapping
       fun updateBank(@RequestBody  bank: Bank): Bank = service.updateBank(bank)
+*/
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<Unit> =
+        service.getSupplier(id).map {
+            service.delete(it)
+            ResponseEntity.noContent().build<Unit>()
+        }.orElse(ResponseEntity.notFound().build())
 
-      @DeleteMapping("/{accountNumber}")
-      @ResponseStatus(HttpStatus.NO_CONTENT)
-      fun deleteBank(@PathVariable accountNumber: String): Unit = service.delete(accountNumber)
-  */
 }

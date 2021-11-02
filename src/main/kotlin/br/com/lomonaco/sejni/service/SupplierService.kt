@@ -8,6 +8,7 @@ interface SupplierService {
     fun getSuppliers(): Collection<Supplier>
     fun getSupplier(id: Long): Optional<Supplier>
     fun create(supplierDTO: SupplierDTO): SupplierDTO
-
+    fun delete(supplier: Supplier)
+    fun deleteAll()
 
 }

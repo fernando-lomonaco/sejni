@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.*
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-internal class BankControllerTest @Autowired constructor(
+internal class SupplierControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper
 ) {
