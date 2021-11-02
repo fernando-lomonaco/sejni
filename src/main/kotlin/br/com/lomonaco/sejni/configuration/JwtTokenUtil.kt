@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -63,6 +65,13 @@ class JwtTokenUtil {
         userDetails.authorities.forEach { authority: GrantedAuthority? ->
             claims[CLAIM_KEY_ROLE] = authority!!.authority
         }
+        return generateToken(claims)
+    }
+
+    fun getToken(username: String): String {
+        val claims: MutableMap<String, Any> = HashMap()
+        claims[CLAIM_KEY_USERNAME] = username
+        claims[CLAIM_KEY_CREATED] = Date()
         return generateToken(claims)
     }
 

@@ -1,10 +1,10 @@
 package br.com.lomonaco.sejni.controller
 
-import br.com.lomonaco.sejni.configuration.JWTUtil
+import br.com.lomonaco.sejni.configuration.JwtTokenUtil
 import br.com.lomonaco.sejni.dto.LoginDTO
+import br.com.lomonaco.sejni.dto.UserDTO
 import br.com.lomonaco.sejni.dto.response.JwtResponseDTO
 import br.com.lomonaco.sejni.dto.response.Response
-import br.com.lomonaco.sejni.model.User
 import br.com.lomonaco.sejni.service.UserService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +28,7 @@ class AuthController(
 ) {
 
     @Autowired
-    private lateinit var jwtUtil: JWTUtil
+    private lateinit var jwtTokenUtil: JwtTokenUtil
 
     @PostMapping("login")
     fun login(@Valid @RequestBody loginDTO: LoginDTO): ResponseEntity<Response> {
@@ -40,18 +40,18 @@ class AuthController(
         SecurityContextHolder.getContext().authentication = authentication
         val userDetails = userDetailsService.loadUserByUsername(loginDTO.username)
 
-        val jwt = jwtUtil.generateToken(userDetails.username)
+        val jwt = jwtTokenUtil.getToken(userDetails)
         response.data = JwtResponseDTO.create(jwt, userDetails.username)
 
         return ResponseEntity.ok(response)
     }
 
     @PostMapping("signup")
-    fun signup(@Valid @RequestBody user: User): ResponseEntity<Response> {
+    fun signup(@Valid @RequestBody user: UserDTO): ResponseEntity<Response> {
 
         val response = Response()
 
-        val existsUsername = service.existsByName(user.name)
+        val existsUsername = service.existsByUsername(user.username)
         val existsEmail = service.existsByEmail(user.email)
 
         if (existsUsername) {

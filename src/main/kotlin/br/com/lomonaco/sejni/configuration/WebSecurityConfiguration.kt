@@ -1,8 +1,8 @@
 package br.com.lomonaco.sejni.configuration
 
 import br.com.lomonaco.sejni.exception.CustomAccessDeniedHandler
-import br.com.lomonaco.sejni.filter.JWTAuthorizationFilter
 import br.com.lomonaco.sejni.filter.JwtAuthEntryPointFilter
+import br.com.lomonaco.sejni.filter.JwtAuthorizationFilter
 import br.com.lomonaco.sejni.service.security.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -38,7 +38,7 @@ class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
 
     @Autowired
     @Lazy
-    private lateinit var jwtAuthorizationFilter: JWTAuthorizationFilter
+    private lateinit var jwtAuthorizationFilter: JwtAuthorizationFilter
 
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder())

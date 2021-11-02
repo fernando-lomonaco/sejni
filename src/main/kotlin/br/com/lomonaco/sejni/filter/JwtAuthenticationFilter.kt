@@ -1,8 +1,8 @@
 package br.com.lomonaco.sejni.filter
 
-import br.com.lomonaco.sejni.configuration.JWTUtil
+import br.com.lomonaco.sejni.configuration.JwtTokenUtil
 import br.com.lomonaco.sejni.model.Credentials
-import br.com.lomonaco.sejni.service.impl.UserDetailsImpl
+import br.com.lomonaco.sejni.model.security.JwtUser
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -13,13 +13,13 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class JWTAuthenticationFilter : UsernamePasswordAuthenticationFilter {
+class JwtAuthenticationFilter : UsernamePasswordAuthenticationFilter {
 
-    private var jwtUtil: JWTUtil
+    private var jwtTokenUtil: JwtTokenUtil
 
-    constructor(authenticationManager: AuthenticationManager, jwtUtil: JWTUtil) : super() {
+    constructor(authenticationManager: AuthenticationManager, jwtTokenUtil: JwtTokenUtil) : super() {
         this.authenticationManager = authenticationManager
-        this.jwtUtil = jwtUtil
+        this.jwtTokenUtil = jwtTokenUtil
     }
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse?): Authentication? {
@@ -40,8 +40,8 @@ class JWTAuthenticationFilter : UsernamePasswordAuthenticationFilter {
         chain: FilterChain?,
         authResult: Authentication
     ) {
-        val username = (authResult.principal as UserDetailsImpl).username
-        val token = jwtUtil.generateToken(username)
+        val username = (authResult.principal as JwtUser).username
+        val token = jwtTokenUtil.getToken(username)
         response.addHeader("Authorization", "Bearer $token")
     }
 }
