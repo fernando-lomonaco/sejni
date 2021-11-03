@@ -10,6 +10,11 @@ plugins {
 	jacoco
 }
 
+jacoco {
+	toolVersion = "0.8.7"
+	reportsDirectory.set(layout.buildDirectory.dir("jacocoReport"))
+}
+
 group = "br.com.lomonaco"
 version = "0.0.1-SNAPSHOT"
 description = "Kotlin App"
@@ -63,7 +68,17 @@ tasks.register<Jar>("uberJar") {
 	})
 }
 
+tasks.test {
+	finalizedBy(tasks.jacocoTestReport)
+	extensions.configure(JacocoTaskExtension::class) {
+		destinationFile = layout.buildDirectory.file("jacoco/jacocoTest.exec").get().asFile
+		classDumpDir = layout.buildDirectory.dir("jacoco/classpathdumps").get().asFile
+	}
+}
+
 tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+
 	reports {
 		xml.required.set(true)
 		csv.required.set(false)
