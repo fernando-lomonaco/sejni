@@ -49,10 +49,6 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
-tasks.withType<Test> {
-	useJUnitPlatform()
-}
-
 tasks.register<Jar>("uberJar") {
 	archiveClassifier.set("uber")
 
@@ -65,16 +61,16 @@ tasks.register<Jar>("uberJar") {
 }
 
 tasks.test {
+	useJUnitPlatform()
 	finalizedBy(tasks.jacocoTestReport)
 	extensions.configure(JacocoTaskExtension::class) {
 		destinationFile = layout.buildDirectory.file("jacoco/jacocoTest.exec").get().asFile
 		classDumpDir = layout.buildDirectory.dir("jacoco/classpathdumps").get().asFile
 	}
-	useJUnitPlatform()
 }
 
 tasks.jacocoTestReport {
-
+	dependsOn(tasks.test)
 	reports {
 		xml.required.set(true)
 		csv.required.set(false)
