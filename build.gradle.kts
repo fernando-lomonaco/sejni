@@ -70,6 +70,7 @@ tasks.test {
 		destinationFile = layout.buildDirectory.file("jacoco/jacocoTest.exec").get().asFile
 		classDumpDir = layout.buildDirectory.dir("jacoco/classpathdumps").get().asFile
 	}
+	useJUnitPlatform()
 }
 
 tasks.jacocoTestReport {
