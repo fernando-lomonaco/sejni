@@ -10,6 +10,7 @@ plugins {
 	jacoco
 }
 
+
 group = "br.com.lomonaco"
 version = "0.0.1-SNAPSHOT"
 description = "Kotlin App"
@@ -48,10 +49,6 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
-tasks.withType<Test> {
-	useJUnitPlatform()
-}
-
 tasks.register<Jar>("uberJar") {
 	archiveClassifier.set("uber")
 
@@ -63,7 +60,17 @@ tasks.register<Jar>("uberJar") {
 	})
 }
 
+tasks.test {
+	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+	extensions.configure(JacocoTaskExtension::class) {
+		destinationFile = layout.buildDirectory.file("jacoco/jacocoTest.exec").get().asFile
+		classDumpDir = layout.buildDirectory.dir("jacoco/classpathdumps").get().asFile
+	}
+}
+
 tasks.jacocoTestReport {
+	dependsOn(tasks.test)
 	reports {
 		xml.required.set(true)
 		csv.required.set(false)
@@ -71,3 +78,7 @@ tasks.jacocoTestReport {
 	}
 }
 
+jacoco {
+	toolVersion = "0.8.7"
+	reportsDirectory.set(layout.buildDirectory.dir("jacocoReport"))
+}
