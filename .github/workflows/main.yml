@@ -69,7 +69,7 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./build/reports/jacoco/test/jacocoTestReport.xml
+          flags: unittests
           name: codecov-sejni
           fail_ci_if_error: true
 
