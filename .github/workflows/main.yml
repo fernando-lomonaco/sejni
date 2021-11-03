@@ -66,12 +66,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: build/reports/jacoco/test/
-          name: codecov-sejni
-          fail_ci_if_error: true
+        run:  bash <(curl -s https://codecov.io/bash) -f "build/reports/jacoco/test/jacocoTestReport.xml"
 
   docker:
     name: Publish - Docker Hub
