@@ -10,10 +10,6 @@ plugins {
 	jacoco
 }
 
-jacoco {
-	toolVersion = "0.8.7"
-	reportsDirectory.set(layout.buildDirectory.dir("jacocoReport"))
-}
 
 group = "br.com.lomonaco"
 version = "0.0.1-SNAPSHOT"
@@ -83,4 +79,9 @@ tasks.jacocoTestReport {
 		csv.required.set(false)
 		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
 	}
+}
+
+jacoco {
+	toolVersion = "0.8.7"
+	reportsDirectory.set(layout.buildDirectory.dir("jacocoReport"))
 }
