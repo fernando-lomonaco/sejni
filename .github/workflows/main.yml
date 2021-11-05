@@ -37,11 +37,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Set the value
-        id: step_one
-        run: |
-          echo "PACKAGE_VERSION=$(./gradlew properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')" >> $GITHUB_ENV
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b     
       - name: Build with Gradle
         run: ./gradlew build
 
@@ -98,6 +94,12 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 11
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Set the value
+        id: step_one
+        run: |
+          echo "PACKAGE_VERSION=$(./gradlew properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')" >> $GITHUB_ENV
       - name: New Version
         id: new_version
         run: |
