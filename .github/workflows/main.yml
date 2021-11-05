@@ -24,15 +24,7 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-    steps:
-      - name: Set the value
-        id: step_one
-        run: |
-          PACKAGE_VERSION=$(gradle properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')
-      - name: Use the value
-        id: step_two
-        run: |
-          echo "version="$PACKAGE_VERSION >> >> $GITHUB_ENV
+    steps:     
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -75,6 +67,14 @@ jobs:
         run: chmod +x gradlew
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Set the value
+        id: step_one
+        run: |
+          PACKAGE_VERSION=$(./gradlew properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')
+      - name: Use the value
+        id: step_two
+        run: |
+          echo "version="$PACKAGE_VERSION >> >> $GITHUB_ENV
       - name: SonarCloud Scan
         run: ./gradlew jacocoTestReport
         env:
