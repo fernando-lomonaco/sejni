@@ -38,6 +38,14 @@ jobs:
         run: chmod +x gradlew
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Set the value
+        id: step_one
+        run: |
+          PACKAGE_VERSION=$(./gradlew properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')
+      - name: Use the value
+        id: step_two
+        run: |
+          echo "version="$PACKAGE_VERSION >> >> $GITHUB_ENV
       - name: Build with Gradle
         run: ./gradlew build
 
@@ -66,15 +74,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Set the value
-        id: step_one
-        run: |
-          PACKAGE_VERSION=$(./gradlew properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')
-      - name: Use the value
-        id: step_two
-        run: |
-          echo "version="$PACKAGE_VERSION >> >> $GITHUB_ENV
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b      
       - name: SonarCloud Scan
         run: ./gradlew jacocoTestReport
         env:
