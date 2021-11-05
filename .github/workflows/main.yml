@@ -42,10 +42,6 @@ jobs:
         id: step_one
         run: |
           echo "PACKAGE_VERSION=$(./gradlew properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')" >> $GITHUB_ENV
-      - name: Use the value
-        id: step_two
-        run: |
-          echo "${{ env.PACKAGE_VERSION }}" # This will output 'yellow'
       - name: Build with Gradle
         run: ./gradlew build
 
@@ -105,7 +101,7 @@ jobs:
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Container image
-        run: docker build -t ${{ secrets.DOCKER_REPO }}:latest -t ${{ secrets.DOCKER_REPO }}:v${{ github.run_number }} .
+        run: docker build -t ${{ secrets.DOCKER_REPO }}:v${{ env.PACKAGE_VERSION }} -t ${{ secrets.DOCKER_REPO }}:latest.
       - name: Publish Docker image
         run: docker push ${{ secrets.DOCKER_REPO }}
 
