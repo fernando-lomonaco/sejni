@@ -96,9 +96,7 @@ jobs:
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Container image
-        run: |
-          docker build -t ${{ secrets.DOCKER_REPO }}:v${{ github.run_number }} .
-          docker tag {{ secrets.DOCKER_REPO }}:v${{ github.run_number }} ${{ secrets.DOCKER_REPO }}:latest
+        run: docker build -t ${{ secrets.DOCKER_REPO }}:latest -t ${{ secrets.DOCKER_REPO }}:v${{ github.run_number }} .
       - name: Publish Docker image
         run: docker push ${{ secrets.DOCKER_REPO }}
 
