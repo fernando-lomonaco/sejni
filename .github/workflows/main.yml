@@ -88,12 +88,7 @@ jobs:
     needs: [sonar]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: 11
+      - uses: actions/checkout@v2     
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Set the value
@@ -139,16 +134,26 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [deploy]
 
-    steps:       
-       - name: Create tag        
-         uses: actions/github-script@v3
-         with:
+    steps:
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Set the value
+        id: step_one
+        run: |
+          echo "PACKAGE_VERSION=$(./gradlew properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')" >> $GITHUB_ENV
+      - name: New Version
+        id: new_version
+        run: |
+          echo "${{ env.PACKAGE_VERSION }}"
+      - name: Create tag        
+        uses: actions/github-script@v3
+        with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             github.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/v0.0.1",
+              ref: "refs/tags/${{ env.PACKAGE_VERSION }}",
               sha: context.sha
             })
 
