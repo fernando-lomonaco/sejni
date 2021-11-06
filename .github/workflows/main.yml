@@ -80,12 +80,41 @@ jobs:
           directory: ./build/jacocoReport/test/
           name: codecov-sejni
           fail_ci_if_error: true
+  
+  tag:
+    name: Create tag
+    runs-on: ubuntu-20.04
+    needs: [sonar]
+
+    steps:
+      - uses: actions/checkout@v2     
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Set the value
+        id: step_one
+        run: |
+          echo "PACKAGE_VERSION=$(./gradlew properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')" >> $GITHUB_ENV
+      - name: New Version
+        id: new_version
+        run: |
+          echo "${{ env.PACKAGE_VERSION }}"
+      - name: Create tag        
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ env.PACKAGE_VERSION }}",
+              sha: context.sha
+            })
 
   docker:
     name: Publish - Docker Hub
     runs-on: ubuntu-20.04
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [sonar]
+    needs: [tag]
 
     steps:
       - uses: actions/checkout@v2     
@@ -129,34 +158,6 @@ jobs:
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
           heroku_email: ${{secrets.HEROKU_APP_EMAIL}}
   
-  tag:
-    name: Create tag
-    runs-on: ubuntu-20.04
-    needs: [deploy]
-
-    steps:
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Set the value
-        id: step_one
-        run: |
-          echo "PACKAGE_VERSION=$(./gradlew properties -q | grep "version:" | grep -v "kotlin" | awk '{print $2}')" >> $GITHUB_ENV
-      - name: New Version
-        id: new_version
-        run: |
-          echo "${{ env.PACKAGE_VERSION }}"
-      - name: Create tag        
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/${{ env.PACKAGE_VERSION }}",
-              sha: context.sha
-            })
-
   slack:
     name: Notification - Slack
     runs-on: ubuntu-20.04
