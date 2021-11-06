@@ -10,7 +10,6 @@ plugins {
 	jacoco
 }
 
-
 group = "br.com.lomonaco"
 version = "0.0.1"
 description = "Kotlin App"
@@ -41,7 +40,6 @@ dependencies {
 
 }
 
-
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
@@ -49,16 +47,10 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
-tasks.register<Jar>("uberJar") {
-	archiveClassifier.set("uber")
-
-	from(sourceSets.main.get().output)
-
-	dependsOn(configurations.runtimeClasspath)
-	from({
-		configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-	})
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+	archiveVersion.set("")
 }
+
 
 tasks.test {
 	useJUnitPlatform()
