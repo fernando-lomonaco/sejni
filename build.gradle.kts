@@ -12,7 +12,7 @@ plugins {
 
 
 group = "br.com.lomonaco"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 description = "Kotlin App"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
