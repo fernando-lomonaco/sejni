@@ -133,6 +133,24 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
           heroku_email: ${{secrets.HEROKU_APP_EMAIL}}
+  
+  tag:
+    name: Create tag
+    runs-on: ubuntu-20.04
+    needs: [deploy]
+
+    steps:
+       - uses: actions/github-script@v3
+       - name: Create tag        
+         with:
+          github-token: ${{ github.token }}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/v0.0.1",
+              sha: context.sha
+            })
 
   slack:
     name: Notification - Slack
