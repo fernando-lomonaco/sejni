@@ -12,7 +12,7 @@ plugins {
 
 group = "br.com.lomonaco"
 version = "0.0.1"
-description = "Kotlin App"
+description = "Microsevice Kotlin"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -37,7 +37,6 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("io.mockk:mockk:1.12.0")
-
 }
 
 tasks.withType<KotlinCompile> {
@@ -50,7 +49,6 @@ tasks.withType<KotlinCompile> {
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
 	archiveVersion.set("")
 }
-
 
 tasks.test {
 	useJUnitPlatform()
