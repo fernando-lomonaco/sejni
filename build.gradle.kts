@@ -10,10 +10,9 @@ plugins {
 	jacoco
 }
 
-
 group = "br.com.lomonaco"
-version = "0.0.1-SNAPSHOT"
-description = "Kotlin App"
+version = "0.0.1"
+description = "Microsevice Kotlin"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -38,9 +37,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("io.mockk:mockk:1.12.0")
-
 }
-
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
@@ -49,15 +46,8 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
-tasks.register<Jar>("uberJar") {
-	archiveClassifier.set("uber")
-
-	from(sourceSets.main.get().output)
-
-	dependsOn(configurations.runtimeClasspath)
-	from({
-		configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-	})
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+	archiveVersion.set("")
 }
 
 tasks.test {
